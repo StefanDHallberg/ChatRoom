@@ -12,7 +12,10 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
+import java.util.Enumeration;
 
 public class GUIChatUI implements ChatUI {
 
@@ -60,8 +63,11 @@ public class GUIChatUI implements ChatUI {
         System.out.println("Attempting to start client...");
         Socket clientSocket;
         try {
-            String serverIp = System.getenv("SERVER_IP");
-            String serverPort = System.getenv("SERVER_PORT");
+//            String serverIp = System.getenv("SERVER_IP"); //hardcoded system enviromental variable.
+//            String serverPort = System.getenv("SERVER_PORT");
+            String serverIp = getLocalIPv4Address();  // Automatically get the local IPv4 address
+            String serverPort = "8080";  // Port set to server.
+
 
             if (serverIp == null || serverPort == null) {
                 System.out.println("Environment variables SERVER_IP and/or SERVER_PORT are not set.");
@@ -96,6 +102,24 @@ public class GUIChatUI implements ChatUI {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private String getLocalIPv4Address() {
+        try {
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface network = networkInterfaces.nextElement();
+                Enumeration<InetAddress> addresses = network.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress inetAddress = addresses.nextElement();
+                    if (inetAddress.isSiteLocalAddress()) {
+                        return inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     public void displayMessage(Message message) {
         String rawContent = message.getContent();
