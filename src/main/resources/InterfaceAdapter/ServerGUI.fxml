@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="InterfaceAdapter.ServerController">
-    <TextArea fx:id="serverLog" editable="false" />
-</AnchorPane>
+<?import javafx.scene.text.Font?>
 
+<AnchorPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="InterfaceAdapter.ServerController">
+    <TextArea fx:id="serverLog" editable="false" AnchorPane.leftAnchor="1.0" AnchorPane.TopAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.BottomAnchor="125.0" styleClass="server-Log"/>
+    <Button fx:id="themeButton" onAction="#switchTheme" text="Switch theme" textAlignment="CENTER" AnchorPane.BottomAnchor="90.0" AnchorPane.rightAnchor="6.0" styleClass="theme-button">
+        <font>
+            <Font name="System Italic" size="12.0" />
+        </font>
+    </Button>
+
+
+</AnchorPane>

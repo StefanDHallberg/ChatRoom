@@ -7,5 +7,8 @@ import java.io.IOException;
 public interface ChatService {
 
     Message receiveMessage() throws IOException;
-    void sendMessage(int senderClientNr, String content);
+    void sendMessage(String content);
+
+    void sendNameUpdate(String newName);
+
 }

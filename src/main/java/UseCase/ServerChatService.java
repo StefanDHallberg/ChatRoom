@@ -8,4 +8,7 @@ import java.net.Socket;
 public interface ServerChatService {
     void broadcastMessage(ServerMessage message);
     ServerMessage receiveClientMessage(Socket clientSocket) throws IOException;
+
+    void handleNameUpdate(Socket clientSocket, String newName);
+
 }

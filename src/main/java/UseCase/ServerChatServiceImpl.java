@@ -1,5 +1,6 @@
 package UseCase;
 
+import Entities.Client;
 import Entities.ServerMessage;
 import Entities.ServerTextMessage;
 
@@ -13,31 +14,51 @@ import java.util.concurrent.ConcurrentMap;
 
 public class ServerChatServiceImpl implements ServerChatService {
     private ConcurrentMap<Socket, PrintWriter> clientWriters = new ConcurrentHashMap<>();
+    private ConcurrentMap<Socket, Client> clients = new ConcurrentHashMap<>();
 
-    public void addClient(Socket clientSocket) throws IOException {
+    public void addClient(Socket clientSocket, int clientNumber) throws IOException {
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
         clientWriters.put(clientSocket, out);
+        Client client = new Client(clientNumber, "Client " + clientNumber);
+        clients.put(clientSocket, client);
+
+        // Send a message to set the client's title
+        out.println("SET_TITLE " + clientNumber);
     }
 
-    public void broadcastMessage(ServerMessage message) {
+    public void handleNameUpdate(Socket clientSocket, String newName) {
+        Client client = clients.get(clientSocket);
+        if (client != null) {
+            // Remove the "NAME_UPDATE" from the new name
+            if (newName.startsWith("NAME_UPDATE ")) {
+                newName = newName.substring("NAME_UPDATE ".length());
+            }
+
+            client.setClientName(newName);
+//            System.out.println("Debug: Updated name for socket: " + clientSocket + ", new name: " + newName); //quick ghetto debugging
+        }
+    }
+
+
+    public void broadcastMessage(ServerMessage message) { //broadcast messages to clients.
+        Client sender = clients.get(message.getClientSocket());
+        String senderName = sender != null ? sender.getClientName() : "Unknown";
         for (PrintWriter out : clientWriters.values()) {
-            out.println(message.getContent() + " " + message.getClientNumber());
+            out.println(senderName + ": " + message.getContent());
         }
     }
 
     public ServerMessage receiveClientMessage(Socket clientSocket) throws IOException {
+        Client client = clients.getOrDefault(clientSocket, new Client(1, "Unknown"));
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        String receivedText = in.readLine();
-        int spaceIndex = receivedText.indexOf(" ");
+        String received = in.readLine();
+        ServerMessage message = new ServerTextMessage(received, client.getClientNumber(), client.getClientName(), clientSocket);
 
-        if (spaceIndex == -1) {
-            // Handle the case where no space is found
-            return new ServerTextMessage(receivedText, -1);  // -1 or some default value for clientNumber
+        if (received.startsWith("NAME_UPDATE")) {
+            message.setNameUpdate(true);
+//            System.out.println("Debug: Message include name update."); //quick ghetto debugging
         }
 
-        String content = receivedText.substring(0, spaceIndex);
-        int senderClientNr = Integer.parseInt(receivedText.substring(spaceIndex + 1));
-
-        return new ServerTextMessage(content, senderClientNr);
+        return message;
     }
 }

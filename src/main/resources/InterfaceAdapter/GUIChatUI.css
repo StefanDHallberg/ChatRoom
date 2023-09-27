@@ -1,0 +1,36 @@
+/* Light Theme */
+.root {
+    -fx-background-color: linear-gradient(to bottom, #DDDDDD, #BBBBBB);
+    -fx-border-color: #BBBBBB; /* Light border color */
+}
+
+.text-field, .text-area {
+    -fx-background-color: linear-gradient(to bottom, #EEEEEE, #CCCCCC);
+    -fx-text-fill: black; /* Black text */
+    -fx-font-weight: bold; /* Bold text */
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-text-fill: #000000; /* Black text when focused */
+}
+
+.label {
+    -fx-text-fill: black; /* Black text for labels */
+    -fx-font-weight: bold; /* Bold text for labels */
+}
+
+.theme-button {
+    /* styles for themeButton here */
+    -fx-background-color: #D0D0D0;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+}
+
+.chatArea .content {
+    -fx-background-color: linear-gradient(to bottom, #EEEEEE, #CCCCCC);
+}
+
+.chatArea .text {
+    -fx-fill: black;
+    -fx-font-weight: bold;
+}
