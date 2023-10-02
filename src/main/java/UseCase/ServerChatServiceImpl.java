@@ -1,3 +1,4 @@
+// Du mangler mosce en Javadoc dokumentation her 
 package UseCase;
 
 import Entities.Client;
